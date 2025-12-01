@@ -1,0 +1,27 @@
+pipeline {
+    agent { label 'Deploy-Slave' }
+    
+    stages {
+        stage('Download the Artifact') {
+            steps {
+                sh '''
+                    wget http://44.211.52.31:8081/repository/Hotstar/in/krishna/myapp/8.3.3-SNAPSHOT/myapp-8.3.3-20251201.154954-1.war
+                '''
+            }
+        }
+
+        stage('Deploy the Artifact') {
+            steps {
+                deploy(
+                    adapters: [tomcat9(
+                        credentialsId: 'Apache-Tomcat',
+                        path: '',
+                        url: 'http://184.72.146.96:8080'
+                    )],
+                    contextPath: 'Hotstar',
+                    war: '**/*.war'
+                )
+            }
+        }
+    }
+}
