@@ -1,0 +1,63 @@
+pipeline {
+    agent { label 'Build-Slave' }
+
+    stages {
+        stage('Cloning the Repository') {
+            steps {
+                git branch: 'master', url: 'https://github.com/Rajaneesh2307/Hotstar-Java-Web-App-for-Jenkins-Maven-Apache-Tomcat-Deployment.git'
+            }
+        }
+
+        stage('Validate and Compile the Code') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+
+        stage('Test the Code') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Quality Checks and Security Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+                }
+            }
+        }
+
+        stage('Generating Package') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Uploading the Artifact') {
+            steps {
+                nexusArtifactUploader(
+                    artifacts: [[
+                        artifactId: 'myapp',
+                        classifier: '',
+                        file: 'target/myapp.war',
+                        type: 'war'
+                    ]],
+                    credentialsId: 'Nexus',
+                    groupId: 'in.krishna',
+                    nexusUrl: '44.211.52.31:8081',
+                    nexusVersion: 'nexus3',
+                    protocol: 'http',
+                    repository: 'Hotstar',
+                    version: '8.3.3-SNAPSHOT'
+                )
+            }
+        }
+
+        stage('Build other Job') {
+            steps {
+                build job: 'Deploy-Job'
+            }
+        }
+    }
+}
