@@ -4,7 +4,8 @@ The pipeline automates the process of fetching source code from GitHub, building
 
 The setup simulates a real-time enterprise DevOps workflow used by organizations to ensure smooth, automated, and continuous delivery of software.
 
-Tools & Technologies Used
+Tools & Technologies 
+
 Jenkins (Master–Slave Architecture) =	Automation server to orchestrate the entire CI/CD process
 
 GitHub = Source code management and version control
@@ -22,7 +23,6 @@ Linux (EC2 Instances)	Environment to host Jenkins master and slave nodes
 Pipeline Flow
 
 1. Build Job (on Build-Slave)
-Stages:
 
 Clone the Repository = Jenkins pulls the latest source code from the GitHub repository.
 
@@ -38,8 +38,7 @@ Upload Artifact to Nexus = The generated WAR file is uploaded to the Nexus Repos
 
 Trigger Deploy Job = Automatically triggers the Deploy pipeline upon successful upload.
 
-3. Deploy Job (on Deploy-Slave)
-Stages:
+2. Deploy Job (on Deploy-Slave)
 
 Download the Artifact = Fetches the WAR file from the Nexus repository using wget.
 
